@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Envelope com Carteirinha</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #f8d7ff, #e6b3ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    cursor: pointer;
+  }
+
+  /* Envelope */
+  .envelope {
+    width: 100%;
+    height: 100%;
+    background: #d291ff;
+    position: absolute;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* Aba */
+  .flap {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ffb3ec;
+    clip-path: polygon(0 0, 50% 60%, 100% 0);
+    transform-origin: top;
+    transition: transform 0.6s;
+    z-index: 3;
+  }
+
+  .container.open .flap {
+    transform: rotateX(180deg);
+  }
+
+  /* Coração (mais embaixo) */
+
+
+.heart {
+  position: absolute;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  width: 30px;
+  height: 30px;
+  background: #ff66cc;
+  z-index: 4;
+  transition: opacity 0.3s;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-50%) rotate(-45deg) scale(1); }
+  50% { transform: translateX(-50%) rotate(-45deg) scale(1.1); }
+  100% { transform: translateX(-50%) rotate(-45deg) scale(1); }
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #ff66cc;
+  border-radius: 50%;
+}
+
+.heart::before { top: -15px; left: 0; }
+.heart::after { left: 15px; top: 0; }
+
+  /* Endereço */
+  .address {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 13px;
+    color: #5a2a83;
+    z-index: 2;
+
+    transition: opacity 0.3s;
+  }
+
+  /* SUMIR ao abrir */
+  .container.open .heart,
+  .container.open .address {
+    opacity: 0;
+  }
+
+  /* Carteirinha */
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 100%) scale(0.8);
+
+  width: 290px;   /* aumentou */
+  height: 230px;  /* aumentou */
+
+  border-radius: 15px;
+  text-align: center;
+  padding: 16px;
+
+  background: linear-gradient(135deg, #f8d7ff, #d291ff);
+  border: 2px solid #ffffff;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.4s;
+}.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 100%) scale(0.8);
+
+  width: 290px;   /* aumentou */
+  height: 230px;  /* aumentou */
+
+  border-radius: 15px;
+  text-align: center;
+  padding: 16px;
+
+  background: linear-gradient(135deg, #f8d7ff, #d291ff);
+  border: 2px solid #ffffff;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.4s;
+}
+
+/* quando abre → vai pro centro */
+.container.open .card {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* topo */
+.card-header {
+  font-weight: bold;
+  color: white;
+  background: rgba(192, 97, 255, 0.8);
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+
+/* info */
+.info p {
+  margin: 6px 0; /* aumentou o espaçamento */
+  font-size: 13px;
+  color: #4b0082;
+}
+
+/* botão */
+.ler-mais {
+  margin-top: 6px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  background: #c061ff;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ler-mais:hover {
+  background: #a64ac9;
+}
+
+/* modal fundo */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+.modal.ativo {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* conteúdo */
+.modal-content {
+  background: transparent;
+  position: relative;
+}
+
+/* botão fechar */
+.fechar {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 25px;
+  cursor: pointer;
+  color: white;
+}
+
+.caderno {
+  width: 300px;
+  max-height: 420px; /* altura máxima */
+  overflow-y: auto;  /* ativa rolagem */
+
+  padding: 20px;
+  border-radius: 10px;
+
+  background: #fff;
+
+  /* LINHAS */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #fff,
+    #fff 24px,
+    #ffd6f5 25px
+  );
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+
+  scroll-behavior: smooth;
+}
+
+/* barra de rolagem bonita */
+.caderno::-webkit-scrollbar {
+  width: 8px;
+}
+
+.caderno::-webkit-scrollbar-track {
+  background: #ffe6fa;
+  border-radius: 10px;
+}
+
+.caderno::-webkit-scrollbar-thumb {
+  background: #d291ff;
+  border-radius: 10px;
+}
+
+.caderno::-webkit-scrollbar-thumb:hover {
+  background: #c061ff;
+}
+/* título */
+.caderno h3 {
+  text-align: center;
+  color: #c061ff;
+  margin-bottom: 15px;
+}
+
+/* TEXTO ALINHADO NAS LINHAS */
+.caderno p {
+  font-size: 14px;
+  color: #444;
+
+  line-height: 25px;     /* 🔥 ESSENCIAL */
+  margin: 0;             /* remove espaçamento quebrando linha */
+  text-align: justify;
+}
+/* rodapé */
+.momento {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(255, 102, 204, 0.8);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+  .card h2 {
+    color: #c061ff;
+    margin: 5px 0;
+  }
+
+  .card p {
+    color: #a64ac9;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+.foto {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+}
+
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container" onclick="abrirEnvelope()">
+  <div class="envelope">
+
+    <!-- Coração -->
+    <div class="heart"></div>
+
+    <!-- Aba -->
+    <div class="flap"></div>
+
+    <!-- Endereço -->
+    <div class="address">
+      <strong>Para:</strong><br>
+      Ingrid Moura (Titia Faltante)<br>
+      Av. Dolores Duran, 245 A<br>
+      Curado - PE
+    </div>
+
+  </div>
+
+  <!-- Carteirinha -->
+ <div class="card">
+ <div class="momento">
+  <p style="font-size:12px; color:#fff; margin-bottom:6px;">
+  Uma pessoa admirada nunca esquece sua fã número 1 💜
+  </p>
+</div>
+<div class="foto">
+  <img src="img.jpg" alt="Foto">
+</div>
+
+  <div class="info">
+    <p><strong>Nome:</strong> Ingrid Barbosa de Moura</p>
+    <p><strong>RG:</strong> 8807230</p>
+    <p><strong>CPF:</strong> 091.269.274-03</p>
+  </div>
+
+
+<button class="ler-mais" onclick="abrirModal(event)">Ler mais</button>
+
+<script>
+  function abrirEnvelope() {
+    document.querySelector(".container").classList.toggle("open");
+  }
+
+function abrirModal(event) {
+  event.stopPropagation(); // impede abrir/fechar envelope
+  document.getElementById("modal").classList.add("ativo");
+}
+
+function fecharModal() {
+  document.getElementById("modal").classList.remove("ativo");
+}
+</script>
+<div class="modal" id="modal">
+  <div class="modal-content">
+
+    <span class="fechar" onclick="fecharModal()">&times;</span>
+
+    <div class="caderno">
+      <h3>💜 Para você 💜</h3>
+      <p>
+      Ontem enviei um link para a senhora, mas fiquei com vontade
+      de enviar algo ainda mais carinhoso... com direito à carteirinha
+      de fã número 1 kkkkkk 💖
+      </p>
+      
+      <p>
+      Passando aqui para lembrar a senhora de que tudo vai ficar bem,
+      porque a vontade do nosso Bom Deus é sempre a melhor.
+      E quando vierem as noites em claro ou os pensamentos incertos
+      sobre o futuro, pode desabafar comigo — assim como eu faço
+      com a senhora.
+      </p>
+      
+      <p>
+      Lembro de quando eu estava aperreado e conversei com a senhora...
+      a alegria voltou pra mim através de você. E depois, com muito
+      carinho no coração, pude também te ouvir e te ajudar a esquecer
+      um pouco das preocupações.
+      </p>
+      
+      <p>
+      Nossa amizade é coisa para a eternidade, titia! 🤍</p><p>
+      Não sou tão bom com palavras como a senhora,
+      mas aqui está o sentimento sincero do meu coração.
+      </p>
+      
+      <p>
+      E quando os pensamentos difíceis vierem, pode me chamar.
+      Vou estar aqui para você! É sempre muito bom e prazeroso conversar
+      e estar ao seu lado.
+      </p>
+      
+      <p>
+      Amo muito a senhora, titia ❤️🫶
+      </p>
+      
+      <h3>✨ Momentos inesquecíveis ✨</h3>
+      
+      <p>1. Quando chamei a senhora pra dizer que tinha levado falta (sem ter levado kkkkk) e a senhora acreditou 😂</p>
+      
+      <p>2. Quando a gente arrudiou e, pela primeira vez, pude ouvir a senhora desabafar — sobre a situação do meu tio e de Rebeca.</p>
+      
+      <p>3. Quando começamos a conversar mais e chegamos na intimidade e confiança que temos hoje 🤍</p>
+      
+      <p>4. E, por fim, toda a alegria que a senhora tem me dado — e que eu tento retribuir nos momentos difíceis e nas nossas saídas 💜</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
